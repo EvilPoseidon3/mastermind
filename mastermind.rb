@@ -1,21 +1,36 @@
-module CheckAlgo
-  attr_accessor :number_correct
+def displaytext(text)
+  puts "           ".insert(-1, text)
+end
 
+
+module CheckAlgo
+  attr_accessor :number_correct, :check_index
+  
+    
   def check_me(game_board)
-    @check_index = game_board.index('|   |   |   |   |') - 1
-    @moch_column = '|   |   |   |   |'
-    if @guess == @encryption_code
+      @check_index = if @game_board.index('|   |   |   |   |') != nil
+        @game_board.index('|   |   |   |   |') - 1
+      else 
+        11
+      end
+    
+    if @guess.to_i == @encryption_code.to_i
       self.game_won = true
       puts "Congradulation you guessed write the code was #{@encryption_code}."
       puts 'Would you like to play again?'
     else
       @number_correct = 0
-      for i in 1..4
-        if @guess[i] == @encryption_code[i]
-          self.number_correct += 1 
+      for i in 0..3
+        if @guess.to_s.chars[i] == @encryption_code.to_s.chars[i]
+          @number_correct += 1 
         end  
       end
-      self.game_board[@check_index] = @game_board[@check_index] + "#{@number_correct} numbers match."
+      self.game_board[@check_index].insert(-1, "#{@number_correct} numbers match.")
+      puts displayboard(@board)
+      if @check_index == 11 && @guess != @encryption_code
+        displaytext("GAME OVER SECERET CODE = #{@encryption_code}")
+        displaytext("Thanks for playing!")
+      end
     end
   end
 end
@@ -27,8 +42,8 @@ module Codechoosing
 
   def codechoosing(chooser)
     if chooser.class == Player
-      puts "What's your seceret code going to be?"
-      puts 'Choose a 4 digit number'
+      displaytext("What's your seceret code going to be?")
+      displaytext('Choose a 4 digit number')
       @code_input = gets.chomp.to_i
       if (@code_input.to_s.length == 4) && (@code_input.to_s.chars.all? { |element| element.to_i.class == Integer })
         @encryption_code = @code_input
@@ -39,7 +54,7 @@ module Codechoosing
       end
     elsif chooser.class == Computer
       @encryption_code = rand(1000...9999)
-      puts "The code has been choosen be ready to fail! -#{@computer_name}"
+      displaytext("The code has been choosen be ready to fail! -#{@computer_name}")
     end
   end
 end
@@ -53,9 +68,8 @@ module ChangeAlgo
       puts 'Thats not a valid answer please try again'
       change_board(gets.chomp)
     else
-      @change_index = game_board.index('|   |   |   |   |')
-      @guess.to_s.chars.each { |element| self.game_board[@change_index].sub!('   ', " #{element} ") }
-      puts @board
+      @change_index = @game_board.index('|   |   |   |   |')
+      @guess.to_s.chars.each { |element| @game_board[@change_index].sub!('   ', " #{element} ") }
     end
   end
 
@@ -65,7 +79,7 @@ end
 class Board
   include Codechoosing
   attr_accessor :game_won, :game_board, :board, :row1, :row2, :column1, :column2, :column3, :column4, :column5, :column6,
-                :gamestate, :column7, :column8, :column9, :column10, :column11, :column12
+                :gamestate, :column7, :column8, :column9, :column10, :column11, :column12,:display_board
 
   def initialize
     @game_won = false
@@ -88,8 +102,12 @@ class Board
               @column6, @row1, @column7, @row1, @column8, @row1, @column9, @row1, @column10, @row1, @column11, @row1, @column12, @row1]
     @game_board = [@column1, @column2, @column3, @column4, @column5, @column6, @column7, @column8, @column9, @column10,
                    @column11, @column12]
-    @display_board = @board.map { |element| '           ' + element.to_s }
-    puts @display_board
+    
+    def self.displayboard(array)
+      array.map { |element| '           ' + element.to_s }
+    end
+    
+    puts displayboard(@board)
     puts '   Would you like to play against the '
     puts ' computer or try and beat the computer?'
     puts '    (Yes) For against the computer'
@@ -116,7 +134,7 @@ end
 
 class Player
   def initialize
-    puts "What's your name?"
+    displaytext("What's your name?")
     @player_name = gets.chomp.strip.downcase.capitalize
   end
 end
@@ -152,14 +170,14 @@ class Game < Board
       end
     when false # runs the version where computer choose code
       while @game_won == false && @game_board.count('|   |   |   |   |') > 0
-        puts 'Choose a 4 digit number'
+        displaytext('Choose a 4 digit number')
         @guess_input = gets.chomp
         change_board(@guess_input)
         check_me(@game_board)
       end
       if game_won == false
-        puts 'You lost would you like to play again?'
-        puts '             (Yes/no)'
+        displaytext('You lost would you like to play again?')
+        displaytext('             (Yes/no)')
         @choice = gets.chomp
         Game.new if @choice.downcase.strip == 'yes'
       end
