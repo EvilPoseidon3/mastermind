@@ -11,9 +11,11 @@ module CheckAlgo
     else
       @number_correct = 0
       for i in 1..4
-        self.number_correct = + 1 if @guess[i] == @encryption_code[i]
-        @game_board[@check_index] += "#{number_correct} numbers match."
+        if @guess[i] == @encryption_code[i]
+          self.number_correct += 1 
+        end  
       end
+      self.game_board[@check_index] = @game_board[@check_index] + "#{@number_correct} numbers match."
     end
   end
 end
@@ -46,14 +48,14 @@ module ChangeAlgo
   attr_reader :guess
 
   def change_board(input)
-    @guess = input
-    if input.to_s.length != 4 && input.to_i.class != Integer
+    @guess = input.to_s
+    if (@guess.to_i.to_s.length != 4)
       puts 'Thats not a valid answer please try again'
       change_board(gets.chomp)
     else
       @change_index = game_board.index('|   |   |   |   |')
-      input.to_s.chars.each { |element| @game_board[@change_index].sub('   ', " #{element} ") }
-      puts @display_board
+      @guess.to_s.chars.each { |element| self.game_board[@change_index].sub!('   ', " #{element} ") }
+      puts @board
     end
   end
 
@@ -137,7 +139,6 @@ class Game < Board
     case @gamestate
     when true # runs the version where player chooses code
       while @game_won == false && @game_board.count('|   |   |   |   |') > 0
-        puts 'Choose a 4 digit number'
         @computer_choice = rand(1111..9999)
         change_board(@computer_choice)
         check_me(@game_board)
@@ -147,6 +148,7 @@ class Game < Board
         puts '             (Yes/no)'
         @choice = gets.chomp
         Game.new if @choice.downcase.strip == 'yes'
+        game1 = nil if @choice.downcase.strip == "no"
       end
     when false # runs the version where computer choose code
       while @game_won == false && @game_board.count('|   |   |   |   |') > 0
@@ -165,4 +167,4 @@ class Game < Board
   end
 end
 
-Game.new
+game1 = Game.new
