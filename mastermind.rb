@@ -138,12 +138,42 @@ class Player
     @player_name = gets.chomp.strip.downcase.capitalize
   end
 end
+module ComputerGuess
+  @guess_hash = {position_1: Hash.new, position_2: Hash.new, position_3: Hash.new, position_4: Hash.new}
+  @guess_hash[position_1:] = {number: rand(0..9), number_history: [], correct: false}
+  @guess_hash[position_2:] = {number: rand(0..9), number_history: [], correct: false}
+  @guess_hash[position_3:] = {number: rand(0..9), number_history: [], correct: false}
+  @guess_hash[position_4:] = {number: rand(0..9), number_history: [], correct: false}
+        
+  def addtohistory
+  @guess_hash.each_key { |key| key[:number_history].push(key[:number])}
+  end
+
+  def computer_choice(array)
+      
+      @guess = @guess_hash[:position_1][:number]to_s + @guess_hash[:position_1][:number]to_s + @guess_hash[:position_1][:number]to_s + @guess_hash[:position_1][:number]to_s
+      if @game_board.flatten.include?("numbers") == false
+        @guess_hash.each_key { |key| key[:number] = rand(0..9)}
+        return @guess_hash.each_key { |key| return key[:number]}
+      else
+        @guessNumberCorrect = @game_board[check_index][@game_board[@check_index].index("numbers") - 2]
+        
+        @guess_hash.each_key { |key| if key[:correct] == false 
+      key[:number] = }
+
+
+
+      end
+    end
+end
 
 class Computer
   def initialize
     @letterarray = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     @computer_name = rand(1100..34_343).to_s + 'Motherboard.BOT.type' + @letterarray[rand(0..25)].to_s
   end
+
+  
 end
 
 
